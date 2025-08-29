@@ -14,8 +14,8 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Commands {
-    Default, /// Use default mainnet connection (rate limited)
-    Api,     /// Use API key (https://geomi.dev/) from APTOSBB_KEY environment variable for higher rate limits
+    Default, // Use default mainnet connection (rate limited)
+    Api,     // Use API key (https://geomi.dev/) from APTOSBB_KEY environment variable for higher rate limits
 }
 
 #[tokio::main]
