@@ -16,7 +16,6 @@ use move_core_types::{
 use aptos_framework::{BuildOptions, BuiltPackage};
 use aptos_cached_packages::aptos_stdlib;
 use aptos_rest_client::{Client, AptosBaseUrl};
-use serde::{Deserialize, Serialize};
 use std::{path::Path, collections::HashMap};
 
 pub mod pentest;
@@ -169,12 +168,12 @@ impl AptosBB {
         self.run_transaction(account, payload)
     }
     
-    /// Run transaction with custom payload
-    pub fn run_transaction(
+    /// Run transaction with custom payload and return full output
+    pub fn run_transaction_with_output(
         &mut self,
         account: &Account,
         payload: TransactionPayload,
-    ) -> TransactionStatus {
+    ) -> (TransactionStatus, aptos_types::transaction::TransactionOutput) {
         let sequence_number = *self.sequence_numbers.get(account.address()).unwrap_or(&0);
         self.sequence_numbers.insert(*account.address(), sequence_number + 1);
         
@@ -197,6 +196,16 @@ impl AptosBB {
         let output = self.executor.execute_and_apply(txn);
         let status = output.status().to_owned();
         
+        (status, output)
+    }
+    
+    /// Run transaction with custom payload
+    pub fn run_transaction(
+        &mut self,
+        account: &Account,
+        payload: TransactionPayload,
+    ) -> TransactionStatus {
+        let (status, _) = self.run_transaction_with_output(account, payload);
         status
     }
     
